@@ -39,8 +39,7 @@ namespace mdea {
             int mD;  // Number of parameters / dimensions / features
             double mFLow; // Differential weight, aka. mutation, when mFLow == mFHigh, it is fixed, otherwise it is a random number between them for each single generation -> according to scipy implementation
             double mFHigh; 
-            double mCR;
-            double mCRHigh; // Crossover probability
+            double mCR; // Crossover probability
 
             // target 
             int mGeneration;
