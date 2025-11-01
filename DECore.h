@@ -37,9 +37,10 @@ namespace mdea {
             // hyper parameters
             int mNP; // Number of population members, aka. popsize 
             int mD;  // Number of parameters / dimensions / features
-            double mF; // Differential weight, aka. mutation
-            double mCRLow;
-            double mCRHigh; // Crossover probability, when mCRLow == mCRHigh, it is fixed, otherwise it is a random number between them for each single generation -> according to scipy implementation
+            double mFLow; // Differential weight, aka. mutation, when mFLow == mFHigh, it is fixed, otherwise it is a random number between them for each single generation -> according to scipy implementation
+            double mFHigh; 
+            double mCR;
+            double mCRHigh; // Crossover probability
 
             // target 
             int mGeneration;
@@ -54,8 +55,8 @@ namespace mdea {
             TRandom3 mRandGen;
 
         public:
-            DiffEvolutionCore(const BaseTarget& target, int NP=20, double F=0.8, double CRLow=0.95, double CRHigh = 0.95) :
-            mTarget(target), mNP(NP), mF(F), mCRLow(CRLow), mCRHigh(CRHigh), mBestIndex(-1), mBestFitness(TMath::Infinity()), mGeneration(0), mMaxGeneration(0) {
+            DiffEvolutionCore(const BaseTarget& target, int NP=20, double FLow=0.8, double FHigh=0.8, double CR=0.95) :
+            mTarget(target), mNP(NP), mFLow(FLow), mFHigh(FHigh), mCR(CR), mBestIndex(-1), mBestFitness(TMath::Infinity()), mGeneration(0), mMaxGeneration(0) {
                 mD = mTarget.GetNFeatures();
                 mRandGen.SetSeed(4396); // fixed seed for reproducibility
             }
@@ -80,9 +81,9 @@ namespace mdea {
 
             void Evolve() {
                 mGeneration += 1;
-                double mCR; // CR for this generation
-                if (mCRLow == mCRHigh) { mCR = mCRLow; }
-                else { mCR = mRandGen.Uniform(mCRLow, mCRHigh); }
+                double mF; // F for this generation
+                if (mFLow == mFHigh) { mF = mFLow; }
+                else { mF = mRandGen.Uniform(mFLow, mFHigh); }
                 for (int i=0; i<mNP; i++) { // agent loop
                     // select 3 other agents
                     int a = i, b = i, c = i;
@@ -124,11 +125,11 @@ namespace mdea {
                     std::cout << "# Differential Evolution Algorithm" << std::endl;
                     std::cout << "#> Maximum Generation: " << MaxGen << std::endl;
                     std::cout << "#> Population Size: " << mNP << std::endl;
-                    std::cout << "#> Mutation Factor: " << mF << std::endl;
-                    if (mCRLow == mCRHigh) {
-                        std::cout << "#> Crossover Probability: " << mCRLow << std::endl;
+                    std::cout << "#> Crossover Probability: " << mCR << std::endl;
+                    if (mFLow == mFHigh) {
+                        std::cout << "#> Mutation Factor: " << mFLow << std::endl;
                     } else {
-                        std::cout << "#> Crossover Probability Range: [" << mCRLow << ", " << mCRHigh << "]" << std::endl;
+                        std::cout << "#> Mutation Factor Range: [" << mFLow << ", " << mFHigh << "]" << std::endl;
                     }
                     std::cout << "#> Random Seed: " << mRandGen.GetSeed() << std::endl;
                 }
